@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
-import { Uploader } from "@irys/upload";
-import { Solana } from "@irys/upload-solana";
-import { Connection, Keypair, LAMPORTS_PER_SOL } from "@solana/web3.js";
-import bs58 from "bs58";
 
 export async function GET() {
   try {
+    if (process.env.IRYS_UPLOAD_ENABLED !== 'true') {
+      return NextResponse.json({
+        success: false,
+        error: 'Check-wallet is disabled in this environment'
+      }, { status: 501 });
+    }
+
     const privateKey = process.env.SOLANA_PRIVATE_KEY;
     
     if (!privateKey) {
@@ -16,6 +19,12 @@ export async function GET() {
 
     console.log('Checking Solana wallet configuration...');
     
+    // Dynamically import heavy SDKs
+    const { Uploader } = await import("@irys/upload");
+    const { Solana } = await import("@irys/upload-solana");
+    const { Connection, Keypair, LAMPORTS_PER_SOL } = await import("@solana/web3.js");
+    const { default: bs58 } = await import("bs58");
+
     // Initialize uploader for Solana devnet
     const uploader = await Uploader(Solana)
       .withWallet(privateKey)

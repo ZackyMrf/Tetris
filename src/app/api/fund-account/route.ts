@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Uploader } from "@irys/upload";
-import { Solana } from "@irys/upload-solana";
 
 export async function POST(request: NextRequest) {
   try {
+    if (process.env.IRYS_UPLOAD_ENABLED !== 'true') {
+      return NextResponse.json({
+        error: 'Funding is disabled in this environment'
+      }, { status: 501 });
+    }
+
     const privateKey = process.env.SOLANA_PRIVATE_KEY;
     
     if (!privateKey) {
@@ -16,6 +20,10 @@ export async function POST(request: NextRequest) {
 
     console.log('Funding Irys account with SOL...');
     
+    // Dynamically import heavy SDKs
+    const { Uploader } = await import("@irys/upload");
+    const { Solana } = await import("@irys/upload-solana");
+
     // Initialize uploader for Solana devnet
     const uploader = await Uploader(Solana)
       .withWallet(privateKey)

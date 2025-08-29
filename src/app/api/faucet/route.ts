@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
-import { Connection, Keypair, LAMPORTS_PER_SOL } from "@solana/web3.js";
-import bs58 from "bs58";
 
 export async function POST() {
   try {
+    if (process.env.SOLANA_FUNDS_ENABLED !== 'true') {
+      return NextResponse.json({
+        error: 'Faucet is disabled in this environment'
+      }, { status: 501 });
+    }
+
     const privateKey = process.env.SOLANA_PRIVATE_KEY;
     
     if (!privateKey) {
@@ -14,6 +18,10 @@ export async function POST() {
 
     console.log('Requesting SOL airdrop from devnet faucet...');
     
+    // Dynamically import web3 and bs58 to avoid bundling unless used
+    const { Connection, Keypair, LAMPORTS_PER_SOL } = await import("@solana/web3.js");
+    const { default: bs58 } = await import("bs58");
+
     // Create keypair from private key
     const keypair = Keypair.fromSecretKey(bs58.decode(privateKey));
     const publicKey = keypair.publicKey;
