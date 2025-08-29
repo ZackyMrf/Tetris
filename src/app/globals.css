@@ -1,0 +1,193 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0a0b10;
+  --foreground: #e6e6f0;
+  --neon-cyan: #00e5ff;
+  --neon-pink: #ff2bd3;
+  --neon-purple: #7a5cff;
+  --neon-yellow: #ffe066;
+  --card: rgba(255,255,255,0.06);
+  --border: rgba(255,255,255,0.12);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Mobile-first styles and iOS scroll bounce prevention */
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overscroll-behavior: none;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  background: radial-gradient(1200px 600px at 10% 0%, rgba(122,92,255,0.25), transparent 40%),
+              radial-gradient(900px 500px at 90% 20%, rgba(0,229,255,0.2), transparent 45%),
+              linear-gradient(180deg, #090a12 0%, #0b0c14 100%);
+  color: var(--foreground);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+}
+
+/* Loading animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { filter: drop-shadow(0 0 6px var(--neon-cyan)) drop-shadow(0 0 14px rgba(0,229,255,0.6)); }
+  50% { filter: drop-shadow(0 0 10px var(--neon-pink)) drop-shadow(0 0 22px rgba(255,43,211,0.6)); }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-ping {
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Cyberpunk utilities */
+.neon-text {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px rgba(0,229,255,0.75), 0 0 16px rgba(0,229,255,0.55);
+}
+
+.neon-gradient-text {
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--neon-purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 10px rgba(122,92,255,0.35));
+}
+
+.glass-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(8px) saturate(120%);
+}
+
+.neon-border {
+  position: relative;
+}
+.neon-border::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  padding: 1px;
+  background: linear-gradient(90deg, rgba(0,229,255,0.7), rgba(255,43,211,0.7), rgba(122,92,255,0.7));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.neon-btn {
+  background: linear-gradient(90deg, rgba(0,229,255,0.15), rgba(255,43,211,0.15));
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+.neon-btn:hover {
+  border-color: rgba(255,255,255,0.3);
+  box-shadow: 0 0 12px rgba(0,229,255,0.35), 0 0 22px rgba(255,43,211,0.25);
+}
+.neon-btn-primary {
+  background: linear-gradient(90deg, rgba(0,229,255,0.25), rgba(122,92,255,0.3));
+  color: #0b0c14;
+  border: none;
+}
+.neon-btn-primary:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0 18px rgba(0,229,255,0.55), 0 0 28px rgba(122,92,255,0.45);
+}
+
+.scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(transparent, transparent 2px, rgba(255,255,255,0.015) 3px);
+}
+
+.animated-gradient {
+  background: linear-gradient(90deg, rgba(0,229,255,0.12), rgba(255,43,211,0.12), rgba(122,92,255,0.12));
+  background-size: 200% 200%;
+  animation: gradientShift 12s ease infinite;
+}
+
+.neon-glow {
+  animation: glowPulse 3s ease-in-out infinite;
+}
