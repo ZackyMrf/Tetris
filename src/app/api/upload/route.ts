@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Uploader } from "@irys/upload";
-import { Solana } from "@irys/upload-solana";
 
 let uploaderInstance: any = null; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -15,6 +13,10 @@ const getIrysUploader = async () => {
 
       console.log('Initializing Irys uploader for Solana devnet...');
       
+      // Dynamically import heavy SDKs to avoid bundling them unless needed
+      const { Uploader } = await import("@irys/upload");
+      const { Solana } = await import("@irys/upload-solana");
+
       // Configure for Solana devnet as per working script
       uploaderInstance = await Uploader(Solana)
         .withWallet(privateKey)
@@ -35,6 +37,20 @@ const getIrysUploader = async () => {
 
 export async function POST(req: NextRequest) {
   try {
+    // Short-circuit in production if uploads are disabled to keep serverless size low
+    if (process.env.IRYS_UPLOAD_ENABLED !== 'true') {
+      return NextResponse.json({
+        error: 'Upload service is disabled in this environment'
+      }, {
+        status: 501,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        }
+      });
+    }
+
     // Add CORS headers
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
